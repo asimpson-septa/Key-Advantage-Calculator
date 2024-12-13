@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Revenue Neutrality and Profit Loss Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff; /* White background */
+            color: #090366; /* Dark Blue text */
+            font-family: 'Merriweather', serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to the top */
+            height: 100vh;
+        }
+
+        h2 {
+            color: #090366; /* Dark Blue for titles */
+            margin-top: 0;
+            text-align: center; /* Center-align all titles */
+        }
+
+        h2:hover {
+            color: #ff0000; /* Bright Red on hover */
+        }
+
+        h3 {
+            color: #090366; /* Dark Blue for results */
+        }
+
+        label {
+            color: #090366; /* Dark Blue for labels */
+            margin-top: 10px;
+        }
+
+        input {
+            background-color: #ffffff; /* White background for input fields */
+            color: #090366; /* Dark Blue text */
+            border: 1px solid #a7c7e7; /* Light Blue border */
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #090366; /* Dark Blue button */
+            color: #ffffff; /* White text on button */
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #3a539b; /* Slightly lighter Dark Blue on hover */
+        }
+
+        .calculator {
+            margin-top: 20px; /* Adjusted space between calculators */
+            padding: 20px;
+            border: 1px solid #a7c7e7; /* Light Blue border */
+            border-radius: 5px;
+            background-color: #ffffff; /* White background */
+            width: 450px; /* Shrink calculator width */
+            box-sizing: border-box;
+        }
+
+        .calculator input {
+            padding: 10px; /* Same padding for consistency */
+        }
+
+        .calculator button {
+            width: 100%;
+        }
+
+        .calculator span {
+            margin-left: 5px;
+        }
+
+        .checkbox-container {
+            display: inline-block;
+            margin-left: 10px; /* Align checkbox next to the question */
+        }
+
+        .form-row {
+            margin-bottom: 15px; /* Added margin to separate form fields */
+        }
+
+        .percentage {
+            display: inline-block;
+            margin-left: 5px; /* Position the % sign immediately after the input */
+        }
+
+        /* Center the calculator containers */
+        .calculator-container {
+            margin-top: 40px; /* Push entire calculator group down */
+            display: flex;
+            flex-direction: column;
+            gap: 30px; /* Space between calculators */
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <h2>Revenue Neutrality Calculator</h2>
+            
+            <label for="TransitTaps">Enter transit taps: </label>
+            <input type="number" id="TransitTaps"><br>
+
+            <label for="TransitAvgFare">Enter the transit average fare: $ </label>
+            <input type="number" id="TransitAvgFare" step="0.01"><br>
+
+            <label for="RailTaps">Enter rail taps: </label>
+            <input type="number" id="RailTaps"><br>
+
+            <label for="RailAvgFare">Enter the rail average fare: $ </label>
+            <input type="number" id="RailAvgFare" step="0.01"><br>
+
+            <label for="CCTCheckbox">Include CCT Taps? </label>
+            <div class="checkbox-container">
+                <input type="checkbox" id="CCTCheckbox" onchange="toggleCCTFields()"><br>
+            </div>
+
+            <div id="CCTFields" style="display:none;">
+                <div class="form-row">
+                    <label for="CCTTaps">Enter CCT Taps: </label>
+                    <input type="number" id="CCTTaps"><br>
+                </div>
+
+                <div class="form-row">
+                    <label for="CCTAvgFare">Enter CCT average fare: $ </label>
+                    <input type="number" id="CCTAvgFare" step="0.01"><br>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="employees">Enter the number of eligible employees: </label>
+                <input type="number" id="employees"><br>
+            </div>
+
+            <button onclick="calculateRevenueNeutrality()">Calculate</button>
+
+            <h3 id="result"></h3>
+        </div>
+
+        <!-- Profit/Loss Calculator starts here -->
+        <div class="calculator">
+            <h2>Profit/Loss Calculator</h2>
+            
+            <label for="CTPrice">Enter the current price: $ </label>
+            <input type="number" id="CTPrice" step="0.01"><br>
+
+            <label for="RNPrice">Enter the revenue neutral price: $ </label>
+            <input type="number" id="RNPrice" step="0.01"><br>
+
+            <label for="guardrail">Enter the guardrail percentage: %</label>
+            <input type="number" id="guardrail"><span class="percentage"></span><br>
+
+            <div class="form-row">
+                <label for="employeesForProfitLoss">Enter the number of employees: </label>
+                <input type="number" id="employeesForProfitLoss"><br>
+            </div>
+
+            <button onclick="calculateProfitLoss()">Calculate</button>
+
+            <h3 id="profitLossResult"></h3>
+        </div>
+    </div>
+
+    <script>
+        function toggleCCTFields() {
+            var CCTCheckbox = document.getElementById('CCTCheckbox').checked;
+            var CCTFields = document.getElementById('CCTFields');
+            
+            if (CCTCheckbox) {
+                CCTFields.style.display = 'block';
+            } else {
+                CCTFields.style.display = 'none';
+            }
+        }
+
+        function calculateRevenueNeutrality() {
+            // Revenue Neutrality Calculation Logic
+        }
+
+        function calculateProfitLoss() {
+            // Profit Loss Calculation Logic
+        }
+    </script>
+</body>
+</html>

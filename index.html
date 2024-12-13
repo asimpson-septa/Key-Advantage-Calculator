@@ -2,9 +2,54 @@
 <html>
 <head>
     <title>Revenue Neutrality Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f1e6e6; /* Dark Blue */
+            color: #e0e0e0; /* Light Gray */
+            font-family: 'Merriweather', serif;
+        }
+
+        h2 {
+            color: #060242; /* Neon Green */
+        }
+
+        h2:hover {
+            color: #040227; /* Slightly darker Neon Green */
+        }
+
+        h3 {
+            color: #060242; /* White text for the result */
+        }
+
+        label {
+            color: #090366; /* Light Gray for labels */
+        }
+
+        input {
+            background-color: #060242; /* Dark Blue for inputs */
+            color: #ffffff; /* White text in inputs */
+            border: 1px solid #a5adf3; /* Neon Green border */
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            background-color: #050a30; /* Neon Green */
+            color: rgb(255, 255, 255);
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff0000; /* Slightly darker Neon Green */
+        }
+    </style>
 </head>
 <body>
-    <h2>Welcome to the Revenue Neutrality Calculator</h2>
+    <h2>Revenue Neutrality Calculator</h2>
+    
     <label for="TransitTaps">Enter transit taps: </label>
     <input type="number" id="TransitTaps"><br>
 
@@ -17,14 +62,16 @@
     <label for="RailAvgFare">Enter the rail average fare: $ </label>
     <input type="number" id="RailAvgFare" step="0.01"><br>
 
-    <label for="CCTYesNo">Do your calculations include CCT Taps? (yes/no): </label>
-    <input type="text" id="CCTYesNo"><br>
+    <label for="CCTCheckbox">Include CCT Taps? </label>
+    <input type="checkbox" id="CCTCheckbox" onchange="toggleCCTFields()"><br>
 
-    <label for="CCTTaps">Enter CCT Taps: </label>
-    <input type="number" id="CCTTaps" style="display:none"><br>
+    <div id="CCTFields" style="display:none;">
+        <label for="CCTTaps">Enter CCT Taps: </label>
+        <input type="number" id="CCTTaps"><br>
 
-    <label for="CCTAvgFare">Enter CCT average fare: $ </label>
-    <input type="number" id="CCTAvgFare" step="0.01" style="display:none"><br>
+        <label for="CCTAvgFare">Enter CCT average fare: $ </label>
+        <input type="number" id="CCTAvgFare" step="0.01"><br>
+    </div>
 
     <label for="employees">Enter the number of eligible employees: </label>
     <input type="number" id="employees"><br>
@@ -34,25 +81,33 @@
     <h3 id="result"></h3>
 
     <script>
+        function toggleCCTFields() {
+            var CCTCheckbox = document.getElementById('CCTCheckbox').checked;
+            var CCTFields = document.getElementById('CCTFields');
+            
+            if (CCTCheckbox) {
+                CCTFields.style.display = 'block';
+            } else {
+                CCTFields.style.display = 'none';
+            }
+        }
+
         function calculateRevenueNeutrality() {
             var TransitTaps = parseInt(document.getElementById('TransitTaps').value);
             var TransitAvgFare = parseFloat(document.getElementById('TransitAvgFare').value);
             var RailTaps = parseInt(document.getElementById('RailTaps').value);
             var RailAvgFare = parseFloat(document.getElementById('RailAvgFare').value);
-            var CCTYesNo = document.getElementById('CCTYesNo').value.toLowerCase();
+            var CCTCheckbox = document.getElementById('CCTCheckbox').checked;
             var CCTTaps = 0;
             var CCTAvgFare = 0;
             
-            // Handle CCT Taps input based on user choice
-            if (CCTYesNo === 'yes') {
+            // Handle CCT Taps input based on checkbox
+            if (CCTCheckbox) {
                 CCTTaps = parseInt(document.getElementById('CCTTaps').value);
                 CCTAvgFare = parseFloat(document.getElementById('CCTAvgFare').value);
-            } else if (CCTYesNo === 'no') {
+            } else {
                 CCTTaps = 0;
                 CCTAvgFare = 0;
-            } else {
-                document.getElementById('result').innerHTML = "Invalid input for CCT Taps. Please enter 'yes' or 'no'.";
-                return;
             }
             
             var employees = parseInt(document.getElementById('employees').value);
