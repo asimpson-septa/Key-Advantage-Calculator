@@ -5,40 +5,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #ffffff; /* White background */
-            color: #090366; /* Dark Blue text */
+            background-color: #ffffff;
+            color: #090366;
             font-family: 'Merriweather', serif;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Align to the top */
-            height: 100vh;
+            align-items: flex-start;
+            min-height: 140vh;
+            overflow-y: auto;
         }
 
         h2 {
-            color: #090366; /* Dark Blue for titles */
+            color: #090366;
             margin-top: 0;
-            text-align: center; /* Center-align all titles */
+            text-align: center;
         }
 
         h2:hover {
-            color: #ff0000; /* Bright Red on hover */
+            color: #ff0000;
         }
 
         h3 {
-            color: #090366; /* Dark Blue for results */
+            color: #090366;
         }
 
         label {
-            color: #090366; /* Dark Blue for labels */
+            color: #090366;
             margin-top: 10px;
         }
 
         input {
-            background-color: #ffffff; /* White background for input fields */
-            color: #090366; /* Dark Blue text */
-            border: 1px solid #a7c7e7; /* Light Blue border */
+            background-color: #ffffff;
+            color: #090366;
+            border: 1px solid #a7c7e7;
             padding: 10px;
             margin: 10px 0;
             width: 100%;
@@ -46,8 +47,8 @@
         }
 
         button {
-            background-color: #090366; /* Dark Blue button */
-            color: #ffffff; /* White text on button */
+            background-color: #090366;
+            color: #ffffff;
             padding: 10px;
             border: none;
             cursor: pointer;
@@ -57,57 +58,58 @@
         }
 
         button:hover {
-            background-color: #3a539b; /* Slightly lighter Dark Blue on hover */
+            background-color: #3a539b;
         }
 
         .calculator {
-            margin-top: 20px; /* Adjusted space between calculators */
+            margin-top: 20px;
             padding: 20px;
-            border: 1px solid #a7c7e7; /* Light Blue border */
+            border: 1px solid #a7c7e7;
             border-radius: 5px;
-            background-color: #ffffff; /* White background */
-            width: 450px; /* Shrink calculator width */
+            background-color: #ffffff;
+            width: 400px;
             box-sizing: border-box;
         }
 
         .calculator input {
-            padding: 10px; /* Same padding for consistency */
+            padding: 10px;
         }
 
         .calculator button {
             width: 100%;
         }
 
-        .calculator span {
-            margin-left: 5px;
+        .form-row {
+            margin-bottom: 15px;
         }
 
         .checkbox-container {
             display: inline-block;
-            margin-left: 10px; /* Align checkbox next to the question */
-        }
-
-        .form-row {
-            margin-bottom: 15px; /* Added margin to separate form fields */
+            margin-left: 10px;
         }
 
         .percentage {
             display: inline-block;
-            margin-left: 5px; /* Position the % sign immediately after the input */
+            margin-left: 5px;
         }
 
-        /* Center the calculator containers */
         .calculator-container {
-            margin-top: 40px; /* Push entire calculator group down */
+            margin-top: 40px;
             display: flex;
             flex-direction: column;
-            gap: 30px; /* Space between calculators */
+            gap: 30px;
             align-items: center;
+        }
+
+        #result, #profitLossResult {
+            font-size: 1.2em;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="calculator-container">
+        <!-- Revenue Neutrality Calculator -->
         <div class="calculator">
             <h2>Revenue Neutrality Calculator</h2>
             
@@ -150,7 +152,7 @@
             <h3 id="result"></h3>
         </div>
 
-        <!-- Profit/Loss Calculator starts here -->
+        <!-- Profit/Loss Calculator -->
         <div class="calculator">
             <h2>Profit/Loss Calculator</h2>
             
@@ -187,11 +189,63 @@
         }
 
         function calculateRevenueNeutrality() {
-            // Revenue Neutrality Calculation Logic
+            const transitTaps = parseFloat(document.getElementById('TransitTaps').value) || 0;
+            const transitAvgFare = parseFloat(document.getElementById('TransitAvgFare').value) || 0;
+            const railTaps = parseFloat(document.getElementById('RailTaps').value) || 0;
+            const railAvgFare = parseFloat(document.getElementById('RailAvgFare').value) || 0;
+            const includeCCT = document.getElementById('CCTCheckbox').checked;
+            const cctTaps = includeCCT ? parseFloat(document.getElementById('CCTTaps').value) || 0 : 0;
+            const cctAvgFare = includeCCT ? parseFloat(document.getElementById('CCTAvgFare').value) || 0 : 0;
+
+            const totalRevenue = 
+                (transitTaps * transitAvgFare) +
+                (railTaps * railAvgFare) +
+                (cctTaps * cctAvgFare);
+
+            const employees = parseFloat(document.getElementById('employees').value) || 1;
+            const RNPrice = (totalRevenue / employees).toFixed(2);
+
+            document.getElementById('result').innerText = 
+                `Revenue Neutral Price: $${RNPrice}`;
         }
 
         function calculateProfitLoss() {
-            // Profit Loss Calculation Logic
+            const ctPrice = parseFloat(document.getElementById('CTPrice').value) || 0;
+            const rnPrice = parseFloat(document.getElementById('RNPrice').value) || 0;
+            const guardrail = parseFloat(document.getElementById('guardrail').value) || 0;
+            const employees = parseFloat(document.getElementById('employeesForProfitLoss').value) || 0;
+
+            if (!ctPrice || !rnPrice || !guardrail || !employees) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const guardrailDecimal = guardrail / 100;
+            let currentPrice = ctPrice;
+            let totalTerms = 0;
+            let totalDifference = 0;
+            
+            while (Math.abs(currentPrice - rnPrice) > 0.01 && totalTerms < 100) {
+                const difference = Math.abs(currentPrice - rnPrice);
+                totalDifference += difference * employees;
+                
+                if (currentPrice < rnPrice) {
+                    const increase = Math.min(currentPrice * guardrailDecimal, rnPrice - currentPrice);
+                    currentPrice += increase;
+                } else {
+                    const decrease = Math.min(currentPrice * guardrailDecimal, currentPrice - rnPrice);
+                    currentPrice -= decrease;
+                }
+                
+                totalTerms++;
+            }
+
+            const resultText = currentPrice < rnPrice 
+                ? `Total Loss: $${totalDifference.toFixed(2)}`
+                : `Total Profit: $${totalDifference.toFixed(2)}`;
+
+            document.getElementById('profitLossResult').innerText = 
+                `${resultText} over ${totalTerms} terms`;
         }
     </script>
 </body>
