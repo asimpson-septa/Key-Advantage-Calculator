@@ -13,10 +13,21 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 140vh;
+            min-height: 150vh; /* Increased from 140vh to 150vh */
             overflow-y: auto;
+            padding-bottom: 40px; /* Added padding at the bottom */
         }
 
+        .calculator-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+            margin-bottom: 40px; /* Added margin at the bottom */
+        }
+
+        /* Rest of the styles remain exactly the same */
         h2 {
             color: #090366;
             margin-top: 0;
@@ -91,14 +102,6 @@
         .percentage {
             display: inline-block;
             margin-left: 5px;
-        }
-
-        .calculator-container {
-            margin-top: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            align-items: center;
         }
 
         #result, #profitLossResult {
