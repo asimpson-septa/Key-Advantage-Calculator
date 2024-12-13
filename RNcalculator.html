@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Revenue Neutrality Calculator</title>
+</head>
+<body>
+    <h2>Welcome to the Revenue Neutrality Calculator</h2>
+    <label for="TransitTaps">Enter transit taps: </label>
+    <input type="number" id="TransitTaps"><br>
+
+    <label for="TransitAvgFare">Enter the transit average fare: $ </label>
+    <input type="number" id="TransitAvgFare" step="0.01"><br>
+
+    <label for="RailTaps">Enter rail taps: </label>
+    <input type="number" id="RailTaps"><br>
+
+    <label for="RailAvgFare">Enter the rail average fare: $ </label>
+    <input type="number" id="RailAvgFare" step="0.01"><br>
+
+    <label for="CCTYesNo">Do your calculations include CCT Taps? (yes/no): </label>
+    <input type="text" id="CCTYesNo"><br>
+
+    <label for="CCTTaps">Enter CCT Taps: </label>
+    <input type="number" id="CCTTaps" style="display:none"><br>
+
+    <label for="CCTAvgFare">Enter CCT average fare: $ </label>
+    <input type="number" id="CCTAvgFare" step="0.01" style="display:none"><br>
+
+    <label for="employees">Enter the number of eligible employees: </label>
+    <input type="number" id="employees"><br>
+
+    <button onclick="calculateRevenueNeutrality()">Calculate</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+        function calculateRevenueNeutrality() {
+            var TransitTaps = parseInt(document.getElementById('TransitTaps').value);
+            var TransitAvgFare = parseFloat(document.getElementById('TransitAvgFare').value);
+            var RailTaps = parseInt(document.getElementById('RailTaps').value);
+            var RailAvgFare = parseFloat(document.getElementById('RailAvgFare').value);
+            var CCTYesNo = document.getElementById('CCTYesNo').value.toLowerCase();
+            var CCTTaps = 0;
+            var CCTAvgFare = 0;
+            
+            // Handle CCT Taps input based on user choice
+            if (CCTYesNo === 'yes') {
+                CCTTaps = parseInt(document.getElementById('CCTTaps').value);
+                CCTAvgFare = parseFloat(document.getElementById('CCTAvgFare').value);
+            } else if (CCTYesNo === 'no') {
+                CCTTaps = 0;
+                CCTAvgFare = 0;
+            } else {
+                document.getElementById('result').innerHTML = "Invalid input for CCT Taps. Please enter 'yes' or 'no'.";
+                return;
+            }
+            
+            var employees = parseInt(document.getElementById('employees').value);
+            if (!employees || employees <= 0) {
+                document.getElementById('result').innerHTML = "Please enter a valid number of employees.";
+                return;
+            }
+
+            // Perform the calculation
+            var RNPrice = ((TransitTaps * TransitAvgFare) + (RailTaps * RailAvgFare) + (CCTTaps * CCTAvgFare)) / employees;
+            RNPrice = RNPrice.toFixed(2);
+
+            // Display the result
+            document.getElementById('result').innerHTML = "Your revenue neutral price is $" + RNPrice;
+        }
+    </script>
+</body>
+</html>
