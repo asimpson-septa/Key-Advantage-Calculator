@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+<!-- Head section and styles remain exactly the same, skipping to the script section -->
 <head>
     <title>Revenue Neutrality and Profit Loss Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* All previous styles remain exactly the same */
         body {
             background-color: #ffffff;
             color: #090366;
@@ -13,9 +15,9 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            min-height: 150vh; /* Increased from 140vh to 150vh */
+            min-height: 150vh;
             overflow-y: auto;
-            padding-bottom: 40px; /* Added padding at the bottom */
+            padding-bottom: 40px;
         }
 
         .calculator-container {
@@ -24,10 +26,9 @@
             flex-direction: column;
             gap: 30px;
             align-items: center;
-            margin-bottom: 40px; /* Added margin at the bottom */
+            margin-bottom: 40px;
         }
 
-        /* Rest of the styles remain exactly the same */
         h2 {
             color: #090366;
             margin-top: 0;
@@ -112,7 +113,7 @@
 </head>
 <body>
     <div class="calculator-container">
-        <!-- Revenue Neutrality Calculator -->
+        <!-- Revenue Neutrality Calculator stays exactly the same -->
         <div class="calculator">
             <h2>Revenue Neutrality Calculator</h2>
             
@@ -213,42 +214,64 @@
         }
 
         function calculateProfitLoss() {
-            const ctPrice = parseFloat(document.getElementById('CTPrice').value) || 0;
-            const rnPrice = parseFloat(document.getElementById('RNPrice').value) || 0;
-            const guardrail = parseFloat(document.getElementById('guardrail').value) || 0;
-            const employees = parseFloat(document.getElementById('employeesForProfitLoss').value) || 0;
+            const ctPrice = parseFloat(document.getElementById('CTPrice').value);
+            const rnPrice = parseFloat(document.getElementById('RNPrice').value);
+            const guardrail = parseFloat(document.getElementById('guardrail').value);
+            const employees = parseFloat(document.getElementById('employeesForProfitLoss').value);
 
             if (!ctPrice || !rnPrice || !guardrail || !employees) {
                 alert("Please fill in all fields.");
                 return;
             }
 
-            const guardrailDecimal = guardrail / 100;
             let currentPrice = ctPrice;
-            let totalTerms = 0;
-            let totalDifference = 0;
-            
-            while (Math.abs(currentPrice - rnPrice) > 0.01 && totalTerms < 100) {
-                const difference = Math.abs(currentPrice - rnPrice);
-                totalDifference += difference * employees;
+            let totalLoss = 0;
+            let count = 0;
+            const adjustmentFactor = guardrail / 100;
+
+            while (Math.abs(currentPrice - rnPrice) >= 0.01) {
+                count++;
                 
-                if (currentPrice < rnPrice) {
-                    const increase = Math.min(currentPrice * guardrailDecimal, rnPrice - currentPrice);
-                    currentPrice += increase;
+                if (currentPrice > rnPrice) {
+                    // Calculate loss for this term
+                    const lossThisTerm = currentPrice - rnPrice;
+                    totalLoss += lossThisTerm;
+                    
+                    // Calculate next price
+                    if (currentPrice * (1 - adjustmentFactor) < rnPrice) {
+                        currentPrice = rnPrice;
+                    } else {
+                        currentPrice *= (1 - adjustmentFactor);
+                    }
                 } else {
-                    const decrease = Math.min(currentPrice * guardrailDecimal, currentPrice - rnPrice);
-                    currentPrice -= decrease;
+                    // Calculate loss for this term
+                    const lossThisTerm = rnPrice - currentPrice;
+                    totalLoss += lossThisTerm;
+                    
+                    // Calculate next price
+                    if (currentPrice * (1 + adjustmentFactor) > rnPrice) {
+                        currentPrice = rnPrice;
+                    } else {
+                        currentPrice *= (1 + adjustmentFactor);
+                    }
                 }
-                
-                totalTerms++;
+
+                // Safety check to prevent infinite loops
+                if (count > 1000) {
+                    alert("Calculation exceeded maximum iterations.");
+                    return;
+                }
             }
 
-            const resultText = currentPrice < rnPrice 
-                ? `Total Loss: $${totalDifference.toFixed(2)}`
-                : `Total Profit: $${totalDifference.toFixed(2)}`;
+            // Multiply total loss by number of employees
+            totalLoss *= employees;
+
+            const profitLossText = ctPrice > rnPrice 
+                ? `Total Profit: $${totalLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+                : `Total Loss: -$${totalLoss.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
             document.getElementById('profitLossResult').innerText = 
-                `${resultText} over ${totalTerms} terms`;
+                `${profitLossText} over ${count} terms`;
         }
     </script>
 </body>
